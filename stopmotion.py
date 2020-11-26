@@ -13,7 +13,8 @@ MIN_FPS     = 1
 DEFAULT_FPS = 12
 MAX_FPS     = 72
 
-class ctx:
+
+class stopmotion_ctx:
     """
     Empty class we use for saving context
     """
@@ -35,6 +36,9 @@ class ctx:
         self._get_files()
 
     def _get_files(self):
+        '''
+        Updates the list of files that will be used to create the video.
+        '''
         self.files = sorted([ os.path.join(self.src, f) for f in os.listdir(self.src) if f.lower().endswith(".jpg") ])
         
     def __len__(self):
@@ -50,11 +54,14 @@ class ctx:
         raise AttributeError(f"\'{self}\' has no attribute \'{name}\'")
     
     def generate_clip(self):
+        assert len(self) > 0, "No suitable images found."
+
         # Import included here because it takes a while to load...
         from moviepy.editor import concatenate_videoclips, ImageClip
         clips = [ ImageClip(f).set_duration(self.frame_duration) for f in self.files ]
         final_clip = concatenate_videoclips(clips)
         final_clip.write_videofile(self.full_name, fps=self.fps, codec='libx264')
+
 
 def init():
     """
@@ -67,7 +74,7 @@ def init():
     parser.add_argument("--src", help="Source folder for images")
     parser.add_argument("--out", help="Output Name", dest="output")
     res = parser.parse_args()
-    return ctx(fps=res.fps, src=res.src, dst=res.dst, name=res.output)
+    return stopmotion_ctx(fps=res.fps, src=res.src, dst=res.dst, name=res.output)
 
 
 if __name__ == "__main__":
