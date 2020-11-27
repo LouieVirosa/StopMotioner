@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Creates an m4v movie from multiple .jpg images. 
+Class for creating a stopmotion video from static images (JPG only).
 '''
 import datetime
 import os
@@ -11,7 +11,7 @@ DEFAULT_FPS = 12
 MAX_FPS     = 72
 
 
-class stopmotion_ctx:
+class StopMotionCTX:
     """
     Empty class we use for saving context
     """
@@ -27,7 +27,7 @@ class stopmotion_ctx:
             name = datetime.datetime.now().strftime('%Y_%m_%d_%H-%M-%S.m4v')
         self.name = name
 
-        assert MIN_FPS <= fps <= MAX_FPS, f"FPS must be between {MIN_FPS} and {MAX_FPS} (inclusive)" 
+        assert MIN_FPS <= fps <= MAX_FPS, f"FPS must be between {MIN_FPS} and {MAX_FPS} (inclusive)"
         assert os.path.isdir(self.src), f"Source directory {self.dst} does not exist."
         assert os.path.isdir(self.dst), f"Destination directory {self.dst} does not exist."
         self._get_files()
@@ -36,24 +36,28 @@ class stopmotion_ctx:
         '''
         Updates the list of files that will be used to create the video.
         '''
-        self.files = sorted([ os.path.join(self.src, f) for f in os.listdir(self.src) if f.lower().endswith(".jpg") ])
-        
+        self.files = sorted([ os.path.join(self.src, f) for f in os.listdir(self.src)
+                            if f.lower().endswith(".jpg") ])
     def __len__(self):
         return len(self.files)
 
     @property
-    def frame_duration(self):
-            return 1 / self.fps
-    
-    @property
-    def movie_len(self):
-            return self.__len__() / self.fps
+    def frame_duration(self):   # Time length of each frame (in seconds)
+        return 1 / self.fps
 
     @property
-    def full_name(self):
-            return os.path.join(self.dst, self.name)
-    
+    def movie_len(self):    # Length of movie to be generated (in seconds)
+        return self.__len__() / self.fps
+
+    @property
+    def full_name(self):    # Full filename plus path
+        return os.path.join(self.dst, self.name)
+
     def generate_clip(self):
+        '''
+        Creates an mp4 video based on the JPG image in self.files.
+        Will raise an AssertionError if there are no valid images.
+        '''
         assert len(self) > 0, "No suitable images found."
 
         # Import included here because it takes a while to load...
