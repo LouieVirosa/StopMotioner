@@ -44,14 +44,17 @@ class stopmotion_ctx:
     def __len__(self):
         return len(self.files)
 
-    def __getattr__(self, name):
-        if name == 'frame_duration':
+    @property
+    def frame_duration(self):
             return 1 / self.fps
-        elif name == 'movie_len':
+    
+    @property
+    def movie_len(self):
             return self.__len__() / self.fps
-        elif name == 'full_name':
+
+    @property
+    def full_name(self):
             return os.path.join(self.dst, self.name)
-        raise AttributeError(f"\'{self}\' has no attribute \'{name}\'")
     
     def generate_clip(self):
         assert len(self) > 0, "No suitable images found."
@@ -79,6 +82,6 @@ def init():
 
 if __name__ == "__main__":
     ctx = init()
-    print(f"Creating a {ctx.movie_len} second long video from {len(ctx)} images: {ctx.full_name}")
+    print(f"Creating a {ctx.movie_len:.2f} second long video from {len(ctx)} images: {ctx.full_name}")
     ctx.generate_clip()
     sys.exit(0)
