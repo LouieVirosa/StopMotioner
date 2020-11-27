@@ -42,15 +42,18 @@ class StopMotionCTX:
         return len(self.files)
 
     @property
-    def frame_duration(self):   # Time length of each frame (in seconds)
+    def frame_duration(self):
+        '''Time length of each frame (in seconds)'''
         return 1 / self.fps
 
     @property
-    def movie_len(self):    # Length of movie to be generated (in seconds)
+    def movie_len(self):
+        '''Length of movie to be generated (in seconds)'''
         return self.__len__() / self.fps
 
     @property
-    def full_name(self):    # Full filename plus path
+    def full_name(self):
+        '''Full filename plus path'''
         return os.path.join(self.dst, self.name)
 
     def generate_clip(self):
@@ -61,7 +64,9 @@ class StopMotionCTX:
         assert len(self) > 0, "No suitable images found."
 
         # Import included here because it takes a while to load...
+        # pylint:disable=import-outside-toplevel
         from moviepy.editor import concatenate_videoclips, ImageClip
+
         clips = [ ImageClip(f).set_duration(self.frame_duration) for f in self.files ]
         final_clip = concatenate_videoclips(clips)
         final_clip.write_videofile(self.full_name, fps=self.fps, codec='libx264')
