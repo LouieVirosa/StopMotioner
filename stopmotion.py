@@ -52,7 +52,7 @@ class StopMotionCTX:
 
     def generate_clip(self):
         '''
-        Creates an mp4 video based on the JPG image in self.files.
+        Creates an mp4 video based on the JPG images in self.files.
         Will raise an AssertionError if there are no valid images.
         '''
         assert len(self) > 0, "No suitable images found."
