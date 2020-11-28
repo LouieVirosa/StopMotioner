@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Class for creating a stopmotion video from static images (JPG only).
-'''
+'''Class for creating a stopmotion video from static images (JPG only).'''
 import datetime
 import os
 
@@ -12,9 +10,7 @@ MAX_FPS     = 72
 
 
 class StopMotionCTX:
-    """
-    Empty class we use for saving context
-    """
+    '''Class that holds all information and methods needed for creating a stopmotion clip'''
     def __init__(self, fps=DEFAULT_FPS, src=None, dst=None, name=None):
         self.fps = fps
         if src is None:
@@ -33,9 +29,7 @@ class StopMotionCTX:
         self._get_files()
 
     def _get_files(self):
-        '''
-        Updates the list of files that will be used to create the video.
-        '''
+        '''Updates the list of files that will be used to create the video.'''
         self.files = sorted([ os.path.join(self.src, f) for f in os.listdir(self.src)
                             if f.lower().endswith(".jpg") ])
     def __len__(self):
